@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalmGuard - About Us</title>
+    <link rel="stylesheet" href="about2.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a class="logo" href="dash.html">CalmGuard<span>.</span></a>
+            <ul class="menu-links">
+                
+                <li><a href="dash.html">Home</a></li>
+                <li><a href="aboutus2.html">About Us</a></li>
+                <li><a href="logmoni1.html">Monitor</a></li>
+                <li class="profile-icon">
+                    <div class="profile-dropdown">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        <div class="dropdown-content">
+                            <a href="#">Profile</a>
+                            <a href="#">Settings</a>
+                            <a href="#" id="signout" class="signout-button">Logout</a>
+                        </div>
+                    </div>
+                </li>
+                <!-- <li class="profile-icon">
+                    <div class="profile-dropdown">
+                        <img class="user-photo" src="aaron.jpg" alt="User Photo">
+                        <div class="dropdown-content">
+                            <a href="#">Profile</a>
+                            <a href="#">Settings</a>
+                            <a href="front.html">Logout</a>
+                        </div>
+                    </div>
+                </li> -->
+                
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <div class="content">
+            <h2>About CalmGuard</h2>
+            <p>
+                Discover the story behind CalmGuard and how we strive to bring peace and tranquility to your life.
+            </p>
+            <button><a href="learnmore2.html">Learn More</a></button>
+        </div>
+    </section>
+
+    <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, fetchSignInMethodsForEmail, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYEQz3BF7HHAYq4OuYAaSBhncFj9oc8AQ",
+            authDomain: "calmguard-4affd.firebaseapp.com",
+            databaseURL: "https://calmguard-4affd-default-rtdb.firebaseio.com",
+            projectId: "calmguard-4affd",
+            storageBucket: "calmguard-4affd.appspot.com",
+            messagingSenderId: "647620250169",
+            appId: "1:647620250169:web:8b7a7da6381a0ee6c3dbe8",
+            measurementId: "G-HRCVMKDQBK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+        const auth = getAuth();
+        const signoutButton = document.getElementById('signout');
+        console.log("Signout test");
+        signoutButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const auth = getAuth();
+        auth.signOut().then(() => {
+            alert('User Signed Out');
+
+            // Redirect to the home page after successful sign-out
+            window.location.href = 'front.html';
+        }).catch((error) => {
+            console.error('Error signing out:', error);
+            alert('Error during sign-out. Please try again.');
+        });
+        });
+
+        const header = document.querySelector("header");
+        const hamburgerBtn = document.querySelector("#hamburger-btn");
+        const closeMenuBtn = document.querySelector("#close-menu-btn");
+
+        // Toggle mobile menu on hamburger button click
+        hamburgerBtn.addEventListener("click", () => header.classList.toggle("show-mobile-menu"));
+
+        // Close mobile menu on close button click
+        closeMenuBtn.addEventListener("click", () => hamburgerBtn.click());
+
+        
+
+
+    </script>
+</body>
+</html>

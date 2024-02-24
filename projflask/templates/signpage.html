@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="/static/style.css">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <title>CalmGuard | SignIn</title>
+</head>
+
+<body>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form id="signup-form">
+                <h1>Create Account</h1>
+                <a href="{{ url_for('home') }}" class="home-button">Home</a>
+
+                <input type="text" id="name" name="username" placeholder="Username">
+                <input type="email" id="email" name="email" placeholder="Email">
+                <input type="password" id="password" name="password" placeholder="Password">
+                <button type="submit" id="signup" name="signup_submit">Sign Up</button>
+
+            </form>
+        </div>
+        <div class="form-container sign-in">
+            <form id="signin-form">
+                <h1>Sign In</h1>
+                <a href="{{ url_for('home') }}" class="home-button">Home</a>
+
+                <input type="email" id="signin-email" placeholder="Email">
+                <input type="password" id="signin-password" placeholder="Password">
+                <a href="{{ url_for('forget') }}">Forget Your Password?</a>
+                <button type="submit" id="signin" name="signin_submit">Sign In</button>
+                <!-- <a href="#" id="signout" class="signout-button">Sign Out</a> -->
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Welcome Back!</h1>
+                    <p>Enter your personal details to use all of the site features</p>
+                    <button class="hidden" id="login">Sign In</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Register with your personal details to use all of the site features</p>
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, fetchSignInMethodsForEmail, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYEQz3BF7HHAYq4OuYAaSBhncFj9oc8AQ",
+            authDomain: "calmguard-4affd.firebaseapp.com",
+            databaseURL: "https://calmguard-4affd-default-rtdb.firebaseio.com",
+            projectId: "calmguard-4affd",
+            storageBucket: "calmguard-4affd.appspot.com",
+            messagingSenderId: "647620250169",
+            appId: "1:647620250169:web:8b7a7da6381a0ee6c3dbe8",
+            measurementId: "G-HRCVMKDQBK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+        const auth = getAuth();
+
+        const signupForm = document.getElementById('signup-form');
+        const signinForm = document.getElementById('signin-form');
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var username = document.getElementById('name').value;
+
+            try {
+                const methods = await fetchSignInMethodsForEmail(auth, email);
+
+                if (methods.length > 0) {
+                    // Email already exists
+                    alert('Email is already in use. Please use a different email.');
+                } else {
+                    // Proceed with the sign-up
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    await set(ref(database, 'users/' + user.uid), {
+                        username: username,
+                        email: email,
+                    });
+
+                    alert('User Created');
+                }
+            } catch (error) {
+                console.error('Error checking email existence:', error);
+                alert('Error during sign-up. Please try again.');
+            }
+        });
+
+        signinForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            var email = document.getElementById('signin-email').value;
+            var password = document.getElementById('signin-password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    const dt = new Date();
+
+                    update(ref(database, 'users/' + user.uid), {
+                        last_login: dt,
+                    });
+
+                    alert('User Logged In');
+
+                    // Redirect to monitoring.html after successful sign-in
+                    window.location.href = '/dash';
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+
+                    alert(errorMessage);
+                });
+        });
+
+
+        const signoutButton = document.getElementById('signout');
+
+signoutButton.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  const auth = getAuth();
+  auth.signOut().then(() => {
+    alert('User Signed Out');
+
+    // Redirect to the home page after successful sign-out
+    window.location.href = "{{ url_for('home') }}";
+  }).catch((error) => {
+    console.error('Error signing out:', error);
+    alert('Error during sign-out. Please try again.');
+  });
+});
+
+
+    </script>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

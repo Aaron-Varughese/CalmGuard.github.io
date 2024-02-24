@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/static/style.css">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <title>CalmGuard | Forget Password</title>
+</head>
+
+<body>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <!-- Your sign-up form -->
+        </div>
+        <div class="form-container sign-in">
+            <form id="forget-password-form">
+                <h1>Forget Password</h1>
+                <a href="{{ url_for('home') }}"class="home-button">Home</a>
+
+                <input type="email" id="reset-email" placeholder="Email">
+                
+                <input type="submit" id="reset-password" value="Reset Password">
+                
+                <!-- Add the sign-in button -->
+                <a href="{{ url_for('signpage') }}" class="sign-in-button">Sign In</a>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <!-- Your toggle container -->
+        </div>
+    </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYEQz3BF7HHAYq4OuYAaSBhncFj9oc8AQ",
+            authDomain: "calmguard-4affd.firebaseapp.com",
+            // Add other config properties
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+
+        const resetPasswordForm = document.getElementById('forget-password-form');
+
+        resetPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            var email = document.getElementById('reset-email').value;
+
+            try {
+                // Send a password reset email
+                await sendPasswordResetEmail(auth, email);
+
+                // Inform the user that a reset email has been sent
+                alert('Password reset email sent. Check your email inbox.');
+            } catch (error) {
+                // Handle errors (e.g., if the email does not exist)
+                console.error('Error sending reset email:', error);
+                alert('Error sending reset email. Please check the provided email address.');
+            }
+        });
+    </script>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

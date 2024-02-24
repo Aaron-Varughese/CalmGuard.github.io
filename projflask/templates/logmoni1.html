@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/static/logmoni1.css">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalmGuard</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        /* Add your additional styles here for the video monitoring page */
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a class="logo" href="/dash">CalmGuard<span>.</span></a>
+            <ul class="menu-links">
+                
+                <li><a href="/dash">Home</a></li>
+                <li><a href="aboutus2">About Us</a></li>
+                <li><a href="/logmoni1">Monitor</a></li>
+                <li class="profile-icon">
+                    <div class="profile-dropdown">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        <div class="dropdown-content">
+                            <a href="#">Profile</a>
+                            <a href="#">Settings</a>
+                            <a href="#" id="signout" class="signout-button">Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            
+        </nav>
+    </header>
+
+    <section class="hero-section" style="background-image: url('{{ url_for('static', filename='/images/calm.jpg') }}');">
+        <div class="content">
+            <h2>CalmGuard Video Monitoring</h2>
+            <p>
+                Enhance your monitoring experience with real-time video tracking and personalized insights.
+            </p>
+            <button id="start-monitoring-btn"><a href="{{ url_for('monitering') }}">Start Monitoring</a></button>
+
+            
+        </div>
+    </section>
+
+    <script type="module">
+        const header = document.querySelector("header");
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, fetchSignInMethodsForEmail, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYEQz3BF7HHAYq4OuYAaSBhncFj9oc8AQ",
+            authDomain: "calmguard-4affd.firebaseapp.com",
+            databaseURL: "https://calmguard-4affd-default-rtdb.firebaseio.com",
+            projectId: "calmguard-4affd",
+            storageBucket: "calmguard-4affd.appspot.com",
+            messagingSenderId: "647620250169",
+            appId: "1:647620250169:web:8b7a7da6381a0ee6c3dbe8",
+            measurementId: "G-HRCVMKDQBK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+        const auth = getAuth();
+        const signoutButton = document.getElementById('signout');
+        console.log("Signout test");
+        signoutButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const auth = getAuth();
+        auth.signOut().then(() => {
+            alert('User Signed Out');
+
+            // Redirect to the home page after successful sign-out
+            window.location.href = "{{ url_for('home') }}";
+        }).catch((error) => {
+            console.error('Error signing out:', error);
+            alert('Error during sign-out. Please try again.');
+        });
+        });
+
+        const hamburgerBtn = document.querySelector("#hamburger-btn");
+        const closeMenuBtn = document.querySelector("#close-menu-btn");
+        const startMonitoringBtn = document.getElementById('start-monitoring-btn');
+        const timerDisplay = document.getElementById('timer');
+        let isMonitoring = false;
+        let startTime;
+        let timerInterval;
+
+        hamburgerBtn.addEventListener("click", () => header.classList.toggle("show-mobile-menu"));
+        closeMenuBtn.addEventListener("click", () => hamburgerBtn.click());
+
+        startMonitoringBtn.addEventListener('click', () => {
+            if (!isMonitoring) {
+                startMonitoring();
+            }
+        });
+
+        function startMonitoring() {
+            // Your code to start video monitoring goes here
+            console.log('Starting Monitoring...');
+
+            // Mock code for updating the timer
+            startTime = new Date();
+            timerInterval = setInterval(() => {
+                if (isMonitoring) {
+                    const elapsedTime = calculateElapsedTime(startTime);
+                    timerDisplay.textContent = formatTime(elapsedTime);
+                }
+            }, 1000);
+
+            // Mock code for stopping monitoring after 10 seconds
+            setTimeout(() => {
+                stopMonitoring();
+            }, 10000);
+        }
+
+        function stopMonitoring() {
+            // Your code to stop video monitoring goes here
+            console.log('Stopping Monitoring...');
+
+            // Mock code to stop the timer
+            clearInterval(timerInterval);
+            isMonitoring = false;
+        }
+
+        function calculateElapsedTime(startTime) {
+            const currentTime = new Date();
+            const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+            return elapsedTime;
+        }
+
+        function formatTime(timeInSeconds) {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = timeInSeconds % 60;
+            return `${padZero(minutes)}:${padZero(seconds)}`;
+        }
+
+        function padZero(value) {
+            return value < 10 ? `0${value}` : value;
+        }
+
+        
+    </script>
+</body>
+</html>
